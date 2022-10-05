@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace=绑定一个对应的Dao/Mapper接口-->
+<mapper namespace="zxpcr.coresystem.manager.webclanbattle.mapper.ClanBattleUserDao">
+
+    <resultMap id="ClanBatterUserMap" type="java.util.HashMap">
+        <id column="ClanUserId" property="clanUserId" jdbcType="VARCHAR" />
+        <result column="ClanId" property="clanId" jdbcType="VARCHAR" />
+        <result column="UserQQ" property="userQQ" jdbcType="VARCHAR" />
+        <result column="NickName" property="userName" jdbcType="VARCHAR" />
+        <result column="GroupCode" property="clanGroup" jdbcType="VARCHAR" />
+        <result column="Status" property="inClanStatus" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="LoginUserMap" type="java.util.HashMap">
+        <id column="id" property="Id" jdbcType="VARCHAR" />
+        <result column="groupcode" property="Group" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+
+
+
+
+    <!--select查询语句-->
+    <select id="getClanBattlerList" resultType="zxpcr.coresystem.manager.webclanbattle.entity.ClanBattlerEntity">
+        SELECT
+        pclu.UserId ,pclu.ClanId clanId,pclu.ClanUserId,pclu.UserQQ,
+        pcu.NickName userName,pcg2.GroupCode clanGroup,pclu.Status inClanStatus
+        FROM PCR_CLAN_USER pclu INNER JOIN PCR_CLAN_GROUP pcg ON pclu.ClanId = pcg.ClanId
+        INNER JOIN PCR_COMMON_USER pcu ON pclu.UserId = pcu.UserId
+        INNER JOIN PCR_COMMON_GROUP pcg2 ON pcg.GroupId = pcg2.GroupId
+        WHERE pcg2.GroupCode=#{group_id} AND pclu.Status = '1'
+    </select>
+
+
+
+    <update id="deleteClanBattler">
+        UPDATE
+        PCR_CLAN_USER
+        <set>
+            Status='0'
+        </set>
+        WHERE ClanUserId=#{clan_user_id}
+    </update>
+
+
+    <select id="login" resultType="String">
+        SELECT groupcode FROM temp_admin
+        WHERE account=#{user_name} AND password=#{password}
+    </select>
+
+
+
+
+</mapper>

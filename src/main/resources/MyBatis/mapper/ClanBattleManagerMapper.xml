@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace=绑定一个对应的Dao/Mapper接口-->
+<mapper namespace="zxpcr.coresystem.manager.webclanbattle.mapper.ClanBattleManagerDao">
+
+    <resultMap id="ClanInfoMap" type="zxpcr.coresystem.manager.webclanbattle.entity.ClanInfoEntity">
+        <id property="clanId" column="ClanId"></id>
+        <result property="serverType" column="ServerGroup"></result>
+        <result property="clanName" column="ClanName"></result>
+        <result property="clanLoop" column="ClanLoop"></result>
+        <result property="clanOrder" column="ClanOrder"></result>
+        <result property="remainHp" column="Remain"></result>
+    </resultMap>
+
+    <resultMap id="ClanRecordMap" type="zxpcr.coresystem.manager.webclanbattle.entity.ClanRecordEntity">
+        <id property="recordId" column="RecordId"></id>
+        <result property="clanUserId" column="RecordUser"></result>
+        <result property="damage" column="Damage"></result>
+        <result property="damageType" column="DamageType"></result>
+        <result property="clanId" column="Assitance"></result>
+        <result property="handleTime" column="HandleTime"></result>
+        <result property="clanLoop" column="bossLoop"></result>
+        <result property="clanOrder" column="bossOrder"></result>
+    </resultMap>
+
+    <!--select查询语句-->
+    <select id="getClanInfo" resultType="zxpcr.coresystem.manager.webclanbattle.entity.ClanInfoEntity">
+        SELECT
+        pcg.ClanId, pcg.ServerGroup, pcg.ClanName,
+        pcg.ClanLoop, pcg.ClanOrder, pcg.Remain
+        FROM
+        PCR_CLAN_USER pcu
+        INNER JOIN
+        PCR_CLAN_GROUP pcg
+        ON pcu.ClanId = pcg.ClanId AND pcu.UserId = #{clanCode} AND pcu.Status='1'
+    </select>
+
+    <select id="getClanRecord" resultType="zxpcr.coresystem.manager.webclanbattle.entity.ClanRecordEntity">
+        SELECT * FROM PCR_CLAN_RECORD pcr
+        WHERE Assitance = #{clanCode} AND Status = '1' AND HandleTime BETWEEN #{beginTime} AND #{endTime}
+    </select>
+
+
+
+
+</mapper>
