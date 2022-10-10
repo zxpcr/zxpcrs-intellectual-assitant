@@ -29,6 +29,9 @@ public class SyncMenuHandler implements WebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         logger.info(message.getPayload().toString());
+        for (Map.Entry<String, WebSocketSession> sessionUser : sessionStorage.entrySet()) {
+            sessionUser.getValue().sendMessage(message);
+        }
     }
 
     @Override
