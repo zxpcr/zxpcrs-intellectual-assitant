@@ -8,6 +8,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,15 +24,28 @@ public class SyncMenuHandler implements WebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         String userName = session.getAttributes().get("userName").toString();
         sessionStorage.put(userName, session);
-        logger.info("检测到神奇的新用户?",userName);
+        logger.info("检测到神奇的新用户?", userName);
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         logger.info(message.getPayload().toString());
-        for (Map.Entry<String, WebSocketSession> sessionUser : sessionStorage.entrySet()) {
-            sessionUser.getValue().sendMessage(message);
+        WebSocketSession sessionOnProcess = null;
+        int a = 0;
+        Iterator<Map.Entry<String, WebSocketSession>> iterator = sessionStorage.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, WebSocketSession> sessionPair = iterator.next();
+            sessionOnProcess = (WebSocketSession) sessionPair.getValue();
+            if (sessionOnProcess.isOpen()) {
+                sessionOnProcess.sendMessage(message);
+            } else {
+                //本不应这样
+                sessionOnProcess.close();
+                sessionStorage.remove(sessionPair.getKey());
+            }
+            a += 1;
         }
+        logger.info("当前总session数量为" + a);
     }
 
     @Override

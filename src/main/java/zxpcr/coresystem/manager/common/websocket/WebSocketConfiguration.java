@@ -44,7 +44,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
             if (!(request instanceof ServletServerHttpRequest)) return true;
 //            HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
 //          String userName = (String) servletRequest.getSession().getAttribute("userName");
-            String userName = "Koishipyb";
+            String userName = "" + Math.ceil(Math.random() * 10000);
             attributes.put("userName", userName);
             return true;
         }
