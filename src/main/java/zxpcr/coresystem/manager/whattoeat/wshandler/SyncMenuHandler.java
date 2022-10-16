@@ -38,11 +38,11 @@ public class SyncMenuHandler implements WebSocketHandler {
             sessionOnProcess = (WebSocketSession) sessionPair.getValue();
             if (sessionOnProcess.isOpen()) {
                 sessionOnProcess.sendMessage(message);
-            } else {
+            } /*else {
                 //本不应这样
                 sessionOnProcess.close();
                 sessionStorage.remove(sessionPair.getKey());
-            }
+            }*/
             a += 1;
         }
         logger.info("当前总session数量为" + a);
@@ -50,12 +50,26 @@ public class SyncMenuHandler implements WebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        exception.printStackTrace();
         logger.info("出错啦");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+
+        WebSocketSession sessionOnProcess = null;
+        Iterator<Map.Entry<String, WebSocketSession>> iterator = sessionStorage.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, WebSocketSession> sessionPair = iterator.next();
+            sessionOnProcess = (WebSocketSession) sessionPair.getValue();
+            if (sessionOnProcess.equals(session)) {
+                sessionOnProcess.close();
+                sessionStorage.remove(sessionPair.getKey());
+            }
+        }
+
         logger.info("完事啦");
+
     }
 
     @Override
